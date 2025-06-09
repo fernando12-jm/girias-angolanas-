@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tradutor de Gírias Angolanas</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="container">
+  <h2>Bem-vindo ao Tradutor</h2>
+
+  <!-- Campo de pesquisa -->
+  <div style="position:relative;">
+    <input type="text" id="giriaInput" placeholder="Digite uma gíria..." oninput="mostrarSugestoes()" />
+    <div id="sugestoesBox" class="suggestions" style="display:none;"></div>
+  </div>
+
+  <button onclick="traduzirGiria()">🔎 Pesquisar</button>
+  <button onclick="criarFraseAleatoria()">💬 Criar Frase</button>
+  <button onclick="window.location.href='cadastrar-giria.html'">➕ Cadastrar Nova Gíria</button>
+
+  <p id="resultado"></p>
+</div>
+
+<script>
+  const usuarioLogado = localStorage.getItem("usuarioLogado");
+  if (!usuarioLogado) window.location.href = "index.html";
+
+  // Dicionário padrão com mais de 50 gírias angolanas
+  const dicionarioPadrao = {
+    "baba": "comida",
+    "cabaça": "cabeça",
+    "chato": "dinheiro",
+    "chela": "cerveja",
+    "criança": "amigo ou parceiro",
+    "dengo": "doença ou problema",
+    "enguiça": "problema ou complicação",
+    "fulô": "mentira ou conversa fiada",
+    "ganda": "grande",
+    "ganguela": "boca",
+    "kota": "comida",
+    "lamba": "pegar ou roubar",
+    "mata": "matéria escolar ou assunto",
+    "mina": "moça ou namorada",
+    "minga": "nada",
+    "mona": "mulher bonita",
+    "muleka": "menina ou garota",
+    "nega": "mulher ou amiga",
+    "pau": "problema ou dificuldade",
+    "pipa": "bebida alcoólica em geral",
+    "pinto": "rapaz ou jovem",
+    "prego": "dinheiro",
+    "quenga": "mulher promíscua",
+    "safra": "sorte ou sorteio",
+    "tromba": "nariz ou bico",
+    "vintém": "quantia pequena de dinheiro",
+    "xulipa": "pancadaria ou briga",
+    "xale": "calça jeans",
+    "xiba": "péssimo ou ruim",
+    "xinga": "insulto ou ofensa",
+    "xuá": "confusão ou bagunça",
+    "zanga": "briga ou discussão",
+    "zinga": "veloz ou rápido",
+    "brazza": "camisa",
+    "cacunda": "costas",
+    "cambada": "grupo de amigos ou turma",
+    "canha": "carteira de motorista",
+    "capanga": "segurança ou braço direito",
+    "carrega": "namorado(a)",
+    "chave": "solução ou resposta",
+    "chibi": "urinar",
+    "chicote": "corpo ou físico",
+    "chouriça": "pão comprido ou sanduíche",
+    "coco": "cabeça",
+    "cueca": "roupa íntima",
+    "curi": "interessado ou curioso",
+    "curuja": "pessoa fofoqueira",
+    "danado": "azarado ou azarento",
+    "disse": "excesso ou fartura",
+    "dumba": "polícia",
+    "engoma": "ferro de passar roupa",
+    "fati": "faca ou instrumento cortante",
+    "fuba": "farinha de milho",
+    "ganguelo": "bocó ou bobo",
+    "jubileu": "confusão ou festa grande",
+    "kipapu": "telefone celular",
+    "kitango": "parte de trás",
+    "kuduro": "estilo musical dançante",
+    "kuma": "comer",
+    "lamba": "pegar ou tomar",
+    "lingala": "idioma ou língua",
+    "lobo": "homem solteiro ou sedutor",
+    "macua": "pessoa originária do norte de Angola",
+    "malandro": "esperto ou safado",
+    "maneta": "mãe ou mãe adotiva",
+    "massango": "descanso ou pausa",
+    "mbaga": "perna",
+    "meco": "namorado(a) ou relacionamento",
+    "mikolo": "árvore ou lugar sombreado",
+    "mutola": "saia ou vestido",
+    "ndombe": "negro ou pessoa de pele escura",
+    "ngola": "rei ou líder",
+    "nzambi": "Deus"
+  };
+
+  function getGiriasUsuario() {
+    const usuarios = JSON.parse(localStorage.getItem("usuarios"));
+    return usuarios[usuarioLogado]?.girias || {};
+  }
+
+  function traduzirGiria() {
+    const giria = document.getElementById("giriaInput").value.trim().toLowerCase();
+    const resultado = document.getElementById("resultado");
+
+    const todasGirias = { ...dicionarioPadrao, ...getGiriasUsuario() };
+
+    if (todasGirias[giria]) {
+      resultado.innerHTML = `<strong>${giria}</strong>: ${todasGirias[giria]}`;
+    } else {
+      resultado.innerHTML = `A gíria "<strong>${giria}</strong>" não foi encontrada.`;
+    }
+  }
+
+  function criarFraseAleatoria() {
+    const todasGirias = { ...dicionarioPadrao, ...getGiriasUsuario() };
+    const chaves = Object.keys(todasGirias);
+
+    if (chaves.length === 0) {
+      document.getElementById("resultado").innerHTML = "Cadastre algumas gírias primeiro!";
+      return;
+    }
+
+    const tiposSignificado = {
+      comida: ["Hoje lambi um pouco de {{giria}}, mas tava xiba!", "A {{giria}} aqui é top!"],
+      bebida: ["Tomei muito {{giria}} ontem...", "Vamos beber uma {{giria}}?"],
+      pessoa: ["Essa {{giria}} é muito legal.", "Aquela {{giria}} tá mona!"],
+      dinheiro: ["Preciso de um prego pra pagar essa {{giria}}.", "Não tem chato pra comprar {{giria}}."],
+      emoção: ["Estou cheio de zanga depois disso.", "Ele ficou dengo com a situação..."],
+      problema: ["Entrei em enguiça com essa {{giria}}.", "Isso virou uma xuá total!"],
+      corpo: ["Minha cacunda tá doendo...", "Esse tromba dele é grandão!"],
+      outro: ["Essa {{giria}} é muito útil.", "Já usaram a {{giria}} hoje?"]
+    };
+
+    function classificar(significado) {
+      if (significado.includes("comida") || significado.includes("comer")) return "comida";
+      if (significado.includes("bebida") || significado.includes("cerveja")) return "bebida";
+      if (significado.includes("amigo") || significado.includes("mulher") || significado.includes("homem")) return "pessoa";
+      if (significado.includes("dinheiro") || significado.includes("valor")) return "dinheiro";
+      if (significado.includes("doença") || significado.includes("problema")) return "problema";
+      if (significado.includes("cabeça") || significado.includes("nariz")) return "corpo";
+      if (significado.includes("emoção") || significado.includes("sentimento")) return "emoção";
+      return "outro";
+    }
+
+    const giriaAleatoria = chaves[Math.floor(Math.random() * chaves.length)];
+    const significado = todasGirias[giriaAleatoria];
+    const categoria = classificar(significado);
+    const fraseAleatoria = tiposSignificado[categoria][Math.floor(Math.random() * tiposSignificado[categoria].length)];
+
+    document.getElementById("resultado").innerHTML = `<em>📌 Frase criada:</em><br><strong>${fraseAleatoria.replace("{{giria}}", giriaAleatoria)}</strong>`;
+  }
+
+  function mostrarSugestoes() {
+    const input = document.getElementById("giriaInput").value.toLowerCase();
+    const sugestoesBox = document.getElementById("sugestoesBox");
+    sugestoesBox.innerHTML = "";
+    sugestoesBox.style.display = "none";
+
+    if (input.length < 1) return;
+
+    const todasGirias = Object.keys({ ...dicionarioPadrao, ...getGiriasUsuario() });
+    const sugestoes = todasGirias.filter(g => g.includes(input));
+
+    if (sugestoes.length > 0) {
+      sugestoes.forEach(giria => {
+        const div = document.createElement("div");
+        div.className = "suggestion-item";
+        div.textContent = giria;
+        div.onclick = () => {
+          document.getElementById("giriaInput").value = giria;
+          traduzirGiria();
+          sugestoesBox.style.display = "none";
+        };
+        sugestoesBox.appendChild(div);
+      });
+      sugestoesBox.style.display = "block";
+    }
+  }
+
+  document.addEventListener("click", function(e) {
+    const container = document.querySelector(".container");
+    const sugestoesBox = document.getElementById("sugestoesBox");
+    if (!container.contains(e.target)) {
+      sugestoesBox.style.display = "none";
+    }
+  });
+</script>
+
+</body>
+</html>

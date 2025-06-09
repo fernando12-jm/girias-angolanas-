@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>GíriaNet - Login</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="container">
+  <h1>🌐 GíriaNet</h1>
+  <button onclick="mostrarLogin()">Entrar</button>
+  <button onclick="mostrarCadastro()">Cadastrar-se</button>
+</div>
+
+<!-- Tela de Login -->
+<div class="container" id="loginScreen" style="display:none;">
+  <h2>Login</h2>
+  <input type="email" id="loginEmail" placeholder="Email" />
+  <input type="password" id="loginSenha" placeholder="Senha" />
+  <button onclick="loginUsuario()">Entrar</button>
+  <p id="loginResultado"></p>
+</div>
+
+<!-- Tela de Cadastro -->
+<div class="container" id="cadastroScreen" style="display:none;">
+  <h2>Cadastro</h2>
+  <input type="text" id="cadNome" placeholder="Seu nome" />
+  <input type="email" id="cadEmail" placeholder="Email" />
+  <input type="password" id="cadSenha" placeholder="Senha" />
+  <button onclick="cadastrarUsuario()">Cadastrar</button>
+  <p id="cadResultado"></p>
+</div>
+
+<script>
+  function mostrarLogin() {
+    esconderTodas();
+    document.getElementById("loginScreen").style.display = "block";
+  }
+
+  function mostrarCadastro() {
+    esconderTodas();
+    document.getElementById("cadastroScreen").style.display = "block";
+  }
+
+  function esconderTodas() {
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("cadastroScreen").style.display = "none";
+  }
+
+  function cadastrarUsuario() {
+    const nome = document.getElementById("cadNome").value.trim();
+    const email = document.getElementById("cadEmail").value.trim().toLowerCase();
+    const senha = document.getElementById("cadSenha").value.trim();
+    const resultado = document.getElementById("cadResultado");
+
+    if (!nome || !email || !senha) {
+      resultado.innerHTML = "<span style='color:red;'>Preencha todos os campos.</span>";
+      return;
+    }
+
+    const usuarios = JSON.parse(localStorage.getItem("usuarios")) || {};
+
+    if (usuarios[email]) {
+      resultado.innerHTML = "<span style='color:orange;'>Este email já está cadastrado.</span>";
+      return;
+    }
+
+    usuarios[email] = { nome, senha, girias: {} };
+    localStorage.setItem("usuarios", JSON.stringify(usuarios));
+    resultado.innerHTML = "<span style='color:#00ffaa;'>✅ Cadastro realizado com sucesso!</span>";
+
+    setTimeout(() => {
+      mostrarLogin();
+    }, 1500);
+  }
+
+  function loginUsuario() {
+    const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+    const senha = document.getElementById("loginSenha").value.trim();
+    const resultado = document.getElementById("loginResultado");
+
+    const usuarios = JSON.parse(localStorage.getItem("usuarios")) || {};
+
+    if (!usuarios[email] || usuarios[email].senha !== senha) {
+      resultado.innerHTML = "<span style='color:red;'>Email ou senha incorretos.</span>";
+      return;
+    }
+
+    localStorage.setItem("usuarioLogado", email);
+    window.location.href = "tradutor.html";
+  }
+</script>
+
+</body>
+</html>

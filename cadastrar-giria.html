@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cadastrar Gíria</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="container">
+  <h2>📝 Cadastrar Nova Gíria</h2>
+  <input type="text" id="novaGiria" placeholder="Nome da gíria" />
+  <input type="text" id="traducaoGiria" placeholder="Tradução ou significado" />
+  <button onclick="cadastrarGiria()">➕ Cadastrar</button>
+  <button onclick="window.location.href='tradutor.html'">↩️ Voltar</button>
+  <p id="resultado"></p>
+</div>
+
+<script>
+  const usuarioLogado = localStorage.getItem("usuarioLogado");
+  if (!usuarioLogado) window.location.href = "index.html";
+
+  function cadastrarGiria() {
+    const giria = document.getElementById("novaGiria").value.trim().toLowerCase();
+    const traducao = document.getElementById("traducaoGiria").value.trim();
+    const resultado = document.getElementById("resultado");
+
+    if (!giria || !traducao) {
+      resultado.innerHTML = "<span style='color:red;'>Preencha todos os campos.</span>";
+      return;
+    }
+
+    const usuarios = JSON.parse(localStorage.getItem("usuarios"));
+    const todasGirias = {
+      ...{
+        "baba": "comida",
+        "cabaça": "cabeça",
+        "chato": "dinheiro",
+        "chela": "cerveja",
+        "criança": "amigo ou parceiro"
+      },
+      ...usuarios[usuarioLogado].girias
+    };
+
+    if (todasGirias[giria]) {
+      resultado.innerHTML = `<span style='color:orange;'>A gíria "${giria}" já existe!</span>`;
+      return;
+    }
+
+    usuarios[usuarioLogado].girias[giria] = traducao;
+    localStorage.setItem("usuarios", JSON.stringify(usuarios));
+    resultado.innerHTML = `<span style='color:#00ffaa;'>✅ Gíria "${giria}" cadastrada com sucesso!</span>`;
+    document.getElementById("novaGiria").value = "";
+    document.getElementById("traducaoGiria").value = "";
+  }
+</script>
+
+</body>
+</html>
