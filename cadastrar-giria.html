@@ -2,29 +2,20 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <title>Tradutor de Gírias Angolanas</title>
+    <title>Cadastrar Gíria</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div class="container">
-      <h2>Bem-vindo ao Tradutor</h2>
-
-      <!-- Campo de pesquisa -->
-      <div style="position: relative">
-        <input
-          type="text"
-          id="giriaInput"
-          placeholder="Digite uma gíria..."
-          oninput="mostrarSugestoes()"
-        />
-        <div id="sugestoesBox" class="suggestions" style="display: none"></div>
-      </div>
-
-      <button onclick="traduzirGiria()">🔎 Pesquisar</button>
-      <button onclick="window.location.href='cadastrar-giria.html'">
-        ➕ Cadastrar Nova Gíria
-      </button>
-
+      <h2>📝 Cadastrar Nova Gíria</h2>
+      <input type="text" id="novaGiria" placeholder="Nome da gíria" />
+      <input
+        type="text"
+        id="traducaoGiria"
+        placeholder="Tradução ou significado"
+      />
+      <button onclick="cadastrarGiria()">➕ Cadastrar</button>
+      <button onclick="window.location.href='tradutor.html'">↩️ Voltar</button>
       <p id="resultado"></p>
     </div>
 
@@ -32,168 +23,43 @@
       const usuarioLogado = localStorage.getItem("usuarioLogado");
       if (!usuarioLogado) window.location.href = "index.html";
 
-      // Dicionário padrão com mais de 50 gírias angolanas
-      const dicionarioPadrao = {
-        nzambi: "Deus",
-        Sacana: "Pessoa malandra ou desconfiada",
-        ruca: "carro",
-        mboa: "moça ou jovem",
-        gasosa: "suborno",
-        "tirar o pé" : "vou fugir(normalmente de uma obrigação)",
-        "wi duro": "pessoa inteligente ou de muita posse",
-        "não ha maca": "não há problema",
-        "mambo rijo": "Algo significante ou coisa grande",
-        "estão a gelar":"estão a beber cerveja",
-
-        
-      };
-
-
-      function getGiriasUsuario() {
-        const usuarios = JSON.parse(localStorage.getItem("usuarios"));
-        return usuarios[usuarioLogado]?.girias || {};
-      }
-
-      function traduzirGiria() {
+      function cadastrarGiria() {
         const giria = document
-          .getElementById("giriaInput")
+          .getElementById("novaGiria")
           .value.trim()
           .toLowerCase();
+        const traducao = document.getElementById("traducaoGiria").value.trim();
         const resultado = document.getElementById("resultado");
 
-        const todasGirias = { ...dicionarioPadrao, ...getGiriasUsuario() };
-
-        if (todasGirias[giria]) {
-          resultado.innerHTML = `<strong>${giria}</strong>: ${todasGirias[giria]}`;
-        } else {
-          resultado.innerHTML = `A gíria "<strong>${giria}</strong>" não foi encontrada.`;
-        }
-      }
-
-      function criarFraseAleatoria() {
-        const todasGirias = { ...dicionarioPadrao, ...getGiriasUsuario() };
-        const chaves = Object.keys(todasGirias);
-
-        if (chaves.length === 0) {
-          document.getElementById("resultado").innerHTML =
-            "Cadastre algumas gírias primeiro!";
+        if (!giria || !traducao) {
+          resultado.innerHTML =
+            "<span style='color:red;'>Preencha todos os campos.</span>";
           return;
         }
 
-        const tiposSignificado = {
-          comida: [
-            "Hoje lambi um pouco de {{giria}}, mas tava xiba!",
-            "A {{giria}} aqui é top!",
-          ],
-          bebida: [
-            "Tomei muito {{giria}} ontem...",
-            "Vamos beber uma {{giria}}?",
-          ],
-          pessoa: [
-            "Essa {{giria}} é muito legal.",
-            "Aquela {{giria}} tá mona!",
-          ],
-          dinheiro: [
-            "Preciso de um prego pra pagar essa {{giria}}.",
-            "Não tem chato pra comprar {{giria}}.",
-          ],
-          emoção: [
-            "Estou cheio de zanga depois disso.",
-            "Ele ficou dengo com a situação...",
-          ],
-          problema: [
-            "Entrei em enguiça com essa {{giria}}.",
-            "Isso virou uma xuá total!",
-          ],
-          corpo: ["Minha cacunda tá doendo...", "Esse tromba dele é grandão!"],
-          outro: [
-            "Essa {{giria}} é muito útil.",
-            "Já usaram a {{giria}} hoje?",
-          ],
+        const usuarios = JSON.parse(localStorage.getItem("usuarios"));
+        const todasGirias = {
+          ...{
+            baba: "comida",
+            cabaça: "cabeça",
+            chato: "dinheiro",
+            chela: "cerveja",
+            criança: "amigo ou parceiro",
+          },
+          ...usuarios[usuarioLogado].girias,
         };
 
-        function classificar(significado) {
-          if (significado.includes("comida") || significado.includes("comer"))
-            return "comida";
-          if (significado.includes("bebida") || significado.includes("cerveja"))
-            return "bebida";
-          if (
-            significado.includes("amigo") ||
-            significado.includes("mulher") ||
-            significado.includes("homem")
-          )
-            return "pessoa";
-          if (significado.includes("dinheiro") || significado.includes("valor"))
-            return "dinheiro";
-          if (
-            significado.includes("doença") ||
-            significado.includes("problema")
-          )
-            return "problema";
-          if (significado.includes("cabeça") || significado.includes("nariz"))
-            return "corpo";
-          if (
-            significado.includes("emoção") ||
-            significado.includes("sentimento")
-          )
-            return "emoção";
-          return "outro";
+        if (todasGirias[giria]) {
+          resultado.innerHTML = `<span style='color:orange;'>A gíria "${giria}" já existe!</span>`;
+          return;
         }
 
-        const giriaAleatoria =
-          chaves[Math.floor(Math.random() * chaves.length)];
-        const significado = todasGirias[giriaAleatoria];
-        const categoria = classificar(significado);
-        const fraseAleatoria =
-          tiposSignificado[categoria][
-            Math.floor(Math.random() * tiposSignificado[categoria].length)
-          ];
-
-        document.getElementById(
-          "resultado"
-        ).innerHTML = `<em>📌 Frase criada:</em><br><strong>${fraseAleatoria.replace(
-          "{{giria}}",
-          giriaAleatoria
-        )}</strong>`;
+        usuarios[usuarioLogado].girias[giria] = traducao;
+        localStorage.setItem("usuarios", JSON.stringify(usuarios));
+        resultado.innerHTML = `<span style='color:#00ffaa;'>✅ Gíria "${giria}" cadastrada com sucesso!</span>`;
+        document.getElementById("novaGiria").value = "";
+        document.getElementById("traducaoGiria").value = "";
       }
-
-      function mostrarSugestoes() {
-        const input = document.getElementById("giriaInput").value.toLowerCase();
-        const sugestoesBox = document.getElementById("sugestoesBox");
-        sugestoesBox.innerHTML = "";
-        sugestoesBox.style.display = "none";
-
-        if (input.length < 1) return;
-
-        const todasGirias = Object.keys({
-          ...dicionarioPadrao,
-          ...getGiriasUsuario(),
-        });
-        const sugestoes = todasGirias.filter((g) => g.includes(input));
-
-        if (sugestoes.length > 0) {
-          sugestoes.forEach((giria) => {
-            const div = document.createElement("div");
-            div.className = "suggestion-item";
-            div.textContent = giria;
-            div.onclick = () => {
-              document.getElementById("giriaInput").value = giria;
-              traduzirGiria();
-              sugestoesBox.style.display = "none";
-            };
-            sugestoesBox.appendChild(div);
-          });
-          sugestoesBox.style.display = "block";
-        }
-      }
-
-      document.addEventListener("click", function (e) {
-        const container = document.querySelector(".container");
-        const sugestoesBox = document.getElementById("sugestoesBox");
-        if (!container.contains(e.target)) {
-          sugestoesBox.style.display = "none";
-        }
-      });
     </script>
   </body>
 </html>
