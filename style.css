@@ -1,8 +1,15 @@
-body {
+@import url("https://fonts.googleapis.com/css2?family=poppins:wght@300;400;500;600;700;800;900&display=swap");
+
+* {
   margin: 0;
-  font-family: 'Roboto', sans-serif;
-  background: linear-gradient(135deg, #0f0f0f, #1a1a2e, #16213e);
-  color: #fff;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Monstserrant", sans-serif;
+}
+body {
+  background-color: #c9d6ff;
+  background: linear-gradient(to right, #e2e2e2, #c9d6ff);
+  font-family: "Roboto", sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -11,7 +18,7 @@ body {
 }
 
 .container {
-  background: rgba(255, 255, 255, 0.05);
+  background-color: #9aa5a8;
   border-radius: 15px;
   box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
   backdrop-filter: blur(10px);
@@ -22,16 +29,24 @@ body {
   position: relative;
 }
 
-input[type="text"], input[type="email"], input[type="password"] {
+.inputbox {
+  position: relative;
+  width: 250px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
   width: 100%;
   padding: 12px;
   margin-top: 10px;
-  border: none;
-  border-radius: 10px;
+  border: 1px solid rgb(255, 255, 255, 0.25);
+  border-radius: 5px;
   font-size: 16px;
   outline: none;
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  background-color: #f9fbf955;
+  color: #4a4c4be0;
+  outline: none;
 }
 
 button {
@@ -50,7 +65,7 @@ button {
 
 button:hover {
   transform: scale(1.03);
-  box-shadow: 0 0 15px #00ffaa;
+  box-shadow: 0 0 15px #435750;
 }
 
 .suggestions {
